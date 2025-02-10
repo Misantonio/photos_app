@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Photo Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            height: 100%;
+            position: fixed;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            margin-left: 200px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .search-bar {
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar form {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #007bff;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 2px solid #007bff;
+            border-left: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+        .gallery {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .folder, .image {
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .folder {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .image img {
+            max-width: 150px;
+            border: 5px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .image img:hover {
+            transform: scale(1.05);
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        .section h2 {
+            margin-bottom: 20px;
+            color: #343a40;
+            text-align: left;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        {% if parent_path is not None and parent_path != absolute_path %}
+            <a href="{% url 'image_list' %}">🏠 Home</a>
+            <a href="{% url 'image_list' parent_path %}">⬅ Go Back</a>
+        {% endif %}
+    </div>
+    <div class="main-content">
+        <div class="search-bar">
+            <form method="GET" action="{% url 'image_list' %}">
+                <input type="text" name="q" placeholder="Search images..." value="{{ request.GET.q }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="gallery">
+            {% if directories %}
+                <div class="section">
+                    <h2>Folders</h2>
+                    <div class="container">
+                        {% for folder in directories %}
+                            <div class="folder" onclick="location.href='{% url 'image_list' folder.0 %}'">
+                                📁 {{ folder.1 }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if images %}
+                <div class="section">
+                    <h2>Images</h2>
+                    <div class="container">
+                        {% for img in images %}
+                            <div class="image" onclick="location.href='{{ img.absolute_path }}'">
+                                <img src="{{ img.relative_path }}" alt="{{ img.filename }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
