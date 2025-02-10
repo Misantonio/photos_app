@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Photo Viewer</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+        img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 2px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            cursor: grab;
+            position: absolute;
+        }
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            display: flex;
+            gap: 10px;
+        }
+        .controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .controls button:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .controls button:disabled {
+            cursor: not-allowed;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    {% if parent_path is not None %}
+        <a href="{% url 'image_list' parent_path %}">⬅ Go Back</a>
+    {% endif %}
+
+    <div class="container">
+        <img id="photo" src="{{ image_path }}" alt="{{ image_name }}">
+        <div class="controls">
+            <button onclick="zoomIn()">+</button>
+            <button onclick="zoomOut()">-</button>
+            <button onclick="resizeOriginal()">Original</button>
+            {% if images|length > 1 %}
+                {% for image in images %}
+                    {% if image == image_name %}
+                        <button onclick="navigate('prev')" {% if forloop.first %}disabled{% endif %}>Previous</button>
+                        <button onclick="navigate('next')" {% if forloop.last %}disabled{% endif %}>Next</button>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let scale = 1;
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+        const photo = document.getElementById('photo');
+
+        function zoomIn() {
+            scale += 0.1;
+            photo.style.transform = `scale(${scale})`;
+        }
+
+        function zoomOut() {
+            if (scale > 0.1) {
+                scale -= 0.1;
+                photo.style.transform = `scale(${scale})`;
+            }
+        }
+
+        function resizeOriginal() {
+            scale = 1;
+            photo.style.transform = `scale(${scale})`;
+            photo.style.left = '0px';
+            photo.style.top = '0px';
+        }
+
+        function navigate(direction) {
+            const currentImage = "{{ image_name }}";
+            const images = {{ images|safe }};
+            let currentIndex = images.indexOf(currentImage);
+
+            if (direction === 'next') {
+                currentIndex = (currentIndex + 1) % images.length;
+            } else if (direction === 'prev') {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+            }
+
+            const next_image = images[currentIndex];
+            window.location.href = `{% url 'image_list' parent_path %}${next_image}`;
+        4}
+
+        photo.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialX = photo.offsetLeft;
+            initialY = photo.offsetTop;
+            photo.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                photo.style.left = `${initialX + dx}px`;
+                photo.style.top = `${initialY + dy}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            photo.style.cursor = 'grab';
+        });
+    </script>
+
+</body>
+</html>
