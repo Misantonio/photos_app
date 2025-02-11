@@ -2,10 +2,15 @@ import os
 import urllib.parse
 
 from gallery.constants import IMAGE_EXTENSIONS
+from photoviewer.settings import MEDIA_ROOT
 
 
-def get_parent_path(path):
-    return "/".join(path.split("/")[:-1]) if path else None
+def get_parent_path(path: str):
+    """ Return the parent path of the given path """
+    parent_path = os.path.dirname(path).replace(MEDIA_ROOT, '')
+    if not parent_path:
+        return '/'
+    return parent_path
 
 
 def get_image_list(path: str) -> list[str]:
@@ -15,11 +20,11 @@ def get_image_list(path: str) -> list[str]:
     :return: A list of images in the given directory
     """
     items = os.listdir(path)
-    images = [
-        f for f in items
-        if f.lower().endswith(tuple(IMAGE_EXTENSIONS))
+    return [
+        item
+        for item in items
+        if item.lower().endswith(tuple(IMAGE_EXTENSIONS))
     ]
-    return images
 
 
 def get_all_images_list(path: str) -> list[str]:
