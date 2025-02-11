@@ -48,11 +48,11 @@
 <body>
 
     {% if parent_path is not None %}
-        <a href="{% url 'image_list' parent_path %}">⬅ Go Back</a>
+        <a href="{% url 'gallery' parent_path %}">⬅ Go Back</a>
     {% endif %}
 
     <div class="container">
-        <img id="photo" src="{{ image_path }}" alt="{{ image_name }}">
+        <img id="photo" src="{{ media_path }}" alt="{{ image_name }}">
         <div class="controls">
             <button onclick="zoomIn()">+</button>
             <button onclick="zoomOut()">-</button>
@@ -105,7 +105,7 @@
             }
 
             const next_image = images[currentIndex];
-            window.location.href = `{% url 'image_list' parent_path %}${next_image}`;
+            window.location.href = `{% url 'gallery' parent_path %}${next_image}`;
         4}
 
         photo.addEventListener('mousedown', (e) => {

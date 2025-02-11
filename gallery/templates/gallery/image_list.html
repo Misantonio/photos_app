@@ -121,13 +121,13 @@
 <body>
     <div class="sidebar">
         {% if parent_path is not None and parent_path != absolute_path %}
-            <a href="{% url 'image_list' %}">🏠 Home</a>
-            <a href="{% url 'image_list' parent_path %}">⬅ Go Back</a>
+            <a href="{% url 'gallery'%}">🏠 Home</a>
+            <a href="{% url 'gallery' parent_path %}">⬅ Go Back</a>
         {% endif %}
     </div>
     <div class="main-content">
         <div class="search-bar">
-            <form method="GET" action="{% url 'image_list' %}">
+            <form method="GET" action="{% url 'gallery' %}">
                 <input type="text" name="q" placeholder="Search images..." value="{{ request.GET.q }}">
                 <button type="submit">Search</button>
             </form>
@@ -138,8 +138,8 @@
                     <h2>Folders</h2>
                     <div class="container">
                         {% for folder in directories %}
-                            <div class="folder" onclick="location.href='{% url 'image_list' folder.0 %}'">
-                                📁 {{ folder.1 }}
+                            <div class="folder" onclick="location.href='{% url 'gallery' folder.relative_path %}'">
+                                📁 {{ folder.name }}
                             </div>
                         {% endfor %}
                     </div>
@@ -150,8 +150,8 @@
                     <h2>Images</h2>
                     <div class="container">
                         {% for img in images %}
-                            <div class="image" onclick="location.href='{{ img.absolute_path }}'">
-                                <img src="{{ img.relative_path }}" alt="{{ img.filename }}">
+                            <div class="image" onclick="location.href='{{ img.relative_path }}'">
+                                <img src="{{ img.media_path }}" alt="{{ img.filename }}">
                             </div>
                         {% endfor %}
                     </div>

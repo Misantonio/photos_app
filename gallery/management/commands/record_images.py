@@ -11,7 +11,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         images_paths = get_all_images_list(MEDIA_ROOT)
-        print(images_paths)
         for image_path in images_paths:
             filename = os.path.basename(image_path)
             Image.objects.get_or_create(filename=filename, path=image_path)

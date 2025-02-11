@@ -1,9 +1,9 @@
 from django.urls import path, re_path
 from gallery import views as gallery_views
+from gallery.views import GalleryView
 urlpatterns = [
-    re_path(r'^(?P<path>.+\.(?:png|jpg|jpeg|gif))/$', gallery_views.image_detail, name='image_detail'),
-    path('', gallery_views.image_list, name='image_list'),  # Root URL
-    path('<path:path>/', gallery_views.image_list, name='image_list'),  # Dynamic paths
+    path('', GalleryView.as_view(), name='gallery'),  # Root URL
+    path('<path:path>/', GalleryView.as_view(), name='gallery'),  # Handles both directories and images
 ]
 
 
