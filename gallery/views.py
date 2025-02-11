@@ -56,7 +56,7 @@ class GalleryView(View):
             media_path = settings.MEDIA_URL + relative_path.lstrip('/')
             images_paths.append(
                 {
-                    "absolute_path": relative_path,
+                    "relative_path": relative_path,
                     "media_path": media_path,
                     "filename": image,
                 }
