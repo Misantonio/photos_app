@@ -2,7 +2,7 @@
 - [x] Query with searchbar
 - [x] Fix regular navigation
 - [ ] Navigate through queried photos only
-- [ ] Process with image recognition and tag each image
-- [ ] Implement a tag filter
+- [x] Process with image recognition and tag each image
+- [x] Query images with tags
 - [ ] Open folder in system's file explorer
 - [ ] Implement face recognition and tag each face
