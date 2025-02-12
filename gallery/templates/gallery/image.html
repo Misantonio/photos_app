@@ -67,16 +67,50 @@
             background: rgba(0, 0, 0, 0.8);
             transform: scale(1.1);
         }
-
         .close-button:active {
             background: rgba(0, 0, 0, 1);
             transform: scale(0.95);
+        }
+        .open-folder-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.27); /* Dark background for contrast */
+            color: white;
+            border: none;
+            border-radius: 12px; /* More rounded corners */
+            cursor: pointer;
+            transition: all 0.3s ease; /* Smooth transition for all effects */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            outline: none;
+            backdrop-filter: blur(10px); /* Adds a slight blur effect to background */
+        }
+
+        .open-folder-button:hover {
+            background-color: rgba(72, 157, 252, 1); /* More opaque on hover */
+            border-color: rgba(72, 157, 252, 1);  /* Adjust border color */
+            transform: translateY(-2px); /* Subtle lift effect */
+        }
+
+        .open-folder-button:active {
+            background-color: rgba(72, 157, 252, 0.6); /* Lighten on click */
+            border-color: rgba(72, 157, 252, 0.6);
+            transform: translateY(1px); /* Slightly depress the button */
+        }
+
+        .open-folder-button:focus {
+            box-shadow: 0 0 8px rgba(72, 157, 252, 1); /* Light blue outline on focus */
         }
     </style>
 </head>
 <body>
 
     <button class="close-button" onclick="window.history.back()">✖</button>
+    <button class="open-folder-button" onclick="openFolder('{{ absolute_path }}')">Open Folder</button>
 
     <div class="container">
         <img id="photo" src="{{ media_path }}" alt="{{ image_name }}">
@@ -157,6 +191,13 @@
             isDragging = false;
             photo.style.cursor = 'grab';
         });
+
+        function openFolder(imagePath) {
+            fetch(`/open-folder/?image_path=${encodeURIComponent(imagePath)}`)
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+        }
     </script>
 
 </body>
