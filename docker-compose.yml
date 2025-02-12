@@ -29,35 +29,35 @@ services:
       - DATABASE_HOST=db
       - DATABASE_PORT=3306
 
-  celery_worker:
-    build: .
-    command: celery -A photoviewer worker --loglevel=info
-    volumes:
-      - .:/app
-    depends_on:
-      - django
-      - db
-    environment:
-      - DATABASE_NAME=photoviewer
-      - DATABASE_USER=user
-      - DATABASE_PASSWORD=password
-      - DATABASE_HOST=db
-      - DATABASE_PORT=3306
-
-  celery_beat:
-    build: .
-    command: celery -A photoviewer beat --loglevel=info
-    volumes:
-      - .:/app
-    depends_on:
-      - django
-      - db
-    environment:
-      - DATABASE_NAME=photoviewer
-      - DATABASE_USER=user
-      - DATABASE_PASSWORD=password
-      - DATABASE_HOST=db
-      - DATABASE_PORT=3306
+#  celery_worker:
+#    build: .
+#    command: celery -A photoviewer worker --loglevel=info
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - django
+#      - db
+#    environment:
+#      - DATABASE_NAME=photoviewer
+#      - DATABASE_USER=user
+#      - DATABASE_PASSWORD=password
+#      - DATABASE_HOST=db
+#      - DATABASE_PORT=3306
+#
+#  celery_beat:
+#    build: .
+#    command: celery -A photoviewer beat --loglevel=info
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - django
+#      - db
+#    environment:
+#      - DATABASE_NAME=photoviewer
+#      - DATABASE_USER=user
+#      - DATABASE_PASSWORD=password
+#      - DATABASE_HOST=db
+#      - DATABASE_PORT=3306
 
 volumes:
   postgres_data:
