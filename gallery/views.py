@@ -1,9 +1,13 @@
 import os
+import subprocess
 from collections import namedtuple
 
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from gallery.constants import IMAGE_EXTENSIONS
 from gallery.models import Image
@@ -112,6 +116,36 @@ class GalleryView(View):
             "image_name": image_name,
             "parent_path": get_parent_path(path),
             "images": get_image_list(absolute_dir_path),
+            "absolute_path": absolute_path,
         }
         return render(request, 'gallery/image.html', context)
+    
+    
+@method_decorator(csrf_exempt, name='dispatch')
+class OpenImageFolderView(View):
+    """
+    Class-based view to open the folder containing an image in the system's file explorer.
+    """
+
+    def get(self, request):
+        image_path = request.GET.get('image_path')  # Get image path from request
+
+        if not image_path:
+            return JsonResponse({'status': 'error', 'message': 'No image path provided'}, status=400)
+
+        folder_path = os.path.dirname(image_path)
+
+        try:
+            if os.name == 'nt':  # Windows
+                subprocess.run(['explorer', f'/select,{image_path}'], check=True)
+            elif os.name == 'posix':  # Linux / MacOS
+                if os.uname().sysname == 'Darwin':  # macOS
+                    subprocess.run(['open', folder_path], check=True)
+                else:  # Linux
+                    subprocess.run(['xdg-open', folder_path], check=True)
+
+            return JsonResponse({'status': 'success', 'message': f'Opened {folder_path}'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
     
