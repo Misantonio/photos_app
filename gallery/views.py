@@ -8,6 +8,7 @@ from django.views.generic import View
 from gallery.constants import IMAGE_EXTENSIONS
 from gallery.models import Image
 from gallery.utils import get_parent_path, get_image_list
+from tagger.models import Tag
 
 
 
@@ -72,7 +73,10 @@ class GalleryView(View):
     
     def _images_from_query(self, request):
         query = request.GET.get('q')
-        images = Image.objects.filter(filename__contains=query)
+        tags = Tag.objects.filter(name__contains=query)
+        # images is a list of Image objects with the given tags or that the qery is in the filename
+        images = Image.objects.filter(tags__in=tags) | Image.objects.filter(filename__contains=query)
+        images = images.distinct()
     
         images_paths = []
         for image in images:
